@@ -8,6 +8,7 @@ import org.openqa.selenium.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -20,8 +21,7 @@ import org.w3c.dom.Document;
 
 import appiumObject.baseAppium;
 import appiumObject.calcAppium;
-
-
+import org.xml.sax.SAXException;
 
 
 public class baseTest {
@@ -30,16 +30,32 @@ public class baseTest {
     static calcAppium calcAppium;
     static ExtentReports extent;
     static ExtentTest myTests;
-    static String reportFilePath="C:\\selenium\\files\\reports\\testReports2.html";
+    static String reportFilePath="";
+ //   static String reportFilePath="C:\\selenium\\files\\reports\\testReports.html";
+
     static WebDriver driver=null;
-    static String path="C:\\Selenium\\files\\";
-    static String file="calcConfig.xml";
+
+    static String xmlPath="src/data/";
+    static String xmlFile="calcConfig.xml";
+
+
     static String assertionError = null;
-    static String imagePath="C:\\selenium\\files\\image";
+
+    private static String iPath="";
+    private static String rPath="";
+    private static File fileImapgePath;
+    private static File reportFile;
+    private static String imagePath="";
+
+
+   // static String imagePath="C:\\selenium\\files\\image\\";
 
     @BeforeClass
     public static void testSetup()throws Exception {
-        extent = new ExtentReports(reportFilePath);
+        setImapgePath();
+        setreportFilePath();
+        System.out.println(getReportPath()+" rPath");
+        extent = new ExtentReports(getReportPath());
         myTests = extent.startTest("ExtentDemo");
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -56,6 +72,34 @@ public class baseTest {
         resetPage();
     }
 
+    public static String getXmlPath() {
+        return xmlPath;
+    }
+
+    public static String getXmlFile()
+    {
+        return xmlFile;
+    }
+
+
+    public static void setImapgePath() throws Exception {
+        iPath=readFrom("imagePath",getXmlPath(), getXmlFile());
+        fileImapgePath = new File(new File(iPath).getAbsolutePath());
+    }
+
+    public static void setreportFilePath() throws Exception {
+        reportFilePath=readFrom("report",getXmlPath(), getXmlFile());
+        reportFile= new File (new File(reportFilePath).getAbsolutePath());
+    }
+    public static String getiPath()
+    {   imagePath=String.valueOf(fileImapgePath);
+        return imagePath;
+    }
+
+    public static String getReportPath()
+    {   rPath=String.valueOf(fileImapgePath);
+        return rPath;
+    }
 
 
     public static void resetPage()
@@ -64,11 +108,12 @@ public class baseTest {
         calcAppium=new calcAppium(driver);
     }
 
-    public  static String takeScreenShot(String IMagePath) throws IOException
+    public  static String takeScreenShot(String ImagePath) throws IOException
     {
+
         TakesScreenshot takesScreenshot =(TakesScreenshot) driver;
         File screenShotFile = takesScreenshot.getScreenshotAs(OutputType.FILE);
-        File destinationFile = new File(IMagePath+".png");
+        File destinationFile = new File(ImagePath+".png");
         try
         {
             FileUtils.copyFile(screenShotFile,destinationFile);
@@ -76,7 +121,7 @@ public class baseTest {
         {
             System.out.println(e.getMessage());
         }
-        return IMagePath+".png";
+        return ImagePath+".png";
     }
 
     public static String readFrom(String keyData, String path, String file) throws Exception

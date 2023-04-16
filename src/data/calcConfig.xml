@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <num1>5</num1>
+ <num2>8</num2>
+  <action>+</action>
+<excpected>13</excpected>
+    <imagePath>src/data/report/images/</imagePath>;
+    <report>src/data/report/testReports.html</report>
+  
+</config>
